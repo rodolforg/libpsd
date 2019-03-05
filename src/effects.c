@@ -23,6 +23,7 @@
  * $Id: effects.c, created by Patrick in 2006.05.23, libpsd@graphest.com Exp $
  */
 
+#include <string.h>
 #include "libpsd.h"
 #include "psd_config.h"
 #include "psd_system.h"

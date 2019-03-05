@@ -23,6 +23,7 @@
  * $Id: gradient_fill.c, created by Patrick in 2006.06.11, libpsd@graphest.com Exp $
  */
 
+#include <string.h>
 #include "libpsd.h"
 #include "psd_system.h"
 #include "psd_stream.h"

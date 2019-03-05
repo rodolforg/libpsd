@@ -23,6 +23,7 @@
  * $Id: solid_color.c, created by Patrick in 2006.05.24, libpsd@graphest.com Exp $
  */
 
+#include <string.h>
 #include "libpsd.h"
 #include "psd_system.h"
 #include "psd_stream.h"

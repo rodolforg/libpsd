@@ -23,6 +23,7 @@
  * $Id: rect.c, created by Patrick in 2005.06.01, libpsd@graphest.com Exp $
  */
 
+#include <string.h>
 #include "libpsd.h"
 #include "psd_rect.h"
 #include "psd_math.h"

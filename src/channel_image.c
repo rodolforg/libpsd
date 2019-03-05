@@ -23,6 +23,7 @@
  * $Id: channel_image.c, created by Patrick in 2006.05.25, libpsd@graphest.com Exp $
  */
 
+#include <string.h>
 #include "libpsd.h"
 #include "psd_config.h"
 #include "psd_system.h"
