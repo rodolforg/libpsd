@@ -31,9 +31,9 @@
 
 
 extern psd_status psd_get_layer_levels(psd_context * context, psd_layer_record * layer, psd_int data_length);
-extern void psd_layer_levels_free(psd_uint info_data);
+extern void psd_layer_levels_free(void * info_data);
 extern psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer, psd_int data_length);
-extern void psd_layer_curves_free(psd_uint info_data);
+extern void psd_layer_curves_free(void * info_data);
 extern psd_status psd_get_layer_brightness_contrast(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_color_balance(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_hue_saturation(psd_context * context, psd_layer_record * layer);
@@ -44,7 +44,7 @@ extern psd_status psd_get_layer_posterize(psd_context * context, psd_layer_recor
 extern psd_status psd_get_layer_channel_mixer(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_photo_filter(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_gradient_map(psd_context * context, psd_layer_record * layer);
-extern void psd_layer_gradient_map_free(psd_uint info_data);
+extern void psd_layer_gradient_map_free(void * info_data);
 extern psd_status psd_get_layer_effects(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_effects2(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_solid_color(psd_context * context, psd_layer_record * layer);
@@ -54,9 +54,9 @@ extern psd_status psd_get_layer_channel_image_data(psd_context * context, psd_la
 extern psd_status psd_get_layer_type_tool(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_pattern(psd_context * context);
 extern psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * layer, psd_int size);
-extern void psd_layer_type_tool_free(psd_uint info_data);
+extern void psd_layer_type_tool_free(psd_layer_type_tool * info_data);
 extern void psd_layer_vector_mask_free(psd_layer_record * layer);
-extern void psd_layer_effects_free(psd_uint layer_info);
+extern void psd_layer_effects_free(void * layer_info);
 extern void psd_pattern_free(psd_context * context);
 static void psd_layer_free(psd_layer_record * layer);
 
@@ -870,7 +870,7 @@ static void psd_layer_free(psd_layer_record * layer)
 					psd_layer_effects_free(layer->layer_info_data[i]);
 					break;
 				default:
-					psd_freeif((void *)layer->layer_info_data[i]);
+					psd_freeif(layer->layer_info_data[i]);
 					break;
 			}
 			layer->layer_info_data[i] = 0;

@@ -615,7 +615,7 @@ struct _psd_layer_record
 	
 	psd_int						layer_info_count;
 	psd_layer_info_type			layer_info_type[psd_layer_info_type_count];
-	psd_uint					layer_info_data[psd_layer_info_type_count];
+	void *						layer_info_data[psd_layer_info_type_count];
 	psd_bool					adjustment_valid;
 	
 	psd_uchar 					fill_opacity;

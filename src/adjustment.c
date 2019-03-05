@@ -33,7 +33,7 @@
 #include "psd_math.h"
 
 
-typedef void psd_adjustment_blend_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
+typedef void psd_adjustment_blend_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
 
 extern psd_bool psd_layer_blend_levels(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect);
 extern psd_bool psd_layer_blend_curves(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect);
@@ -231,7 +231,7 @@ void psd_adjustment_blend_gray(psd_context * context, psd_layer_record * layer, 
 }
 
 void psd_adjustment_blend_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect, 
-	psd_adjustment_blend_proc * blend_proc, psd_uint layer_info_data)
+	psd_adjustment_blend_proc * blend_proc, void * layer_info_data)
 {
 	psd_int i, j, width, height;
 	psd_int dst_red, dst_green, dst_blue, dst_alpha, src_red, src_green, src_blue;

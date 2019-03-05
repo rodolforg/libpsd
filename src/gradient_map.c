@@ -31,9 +31,9 @@
 #include "psd_rect.h"
 
 
-typedef void psd_adjustment_blend_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
+typedef void psd_adjustment_blend_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
 extern void psd_adjustment_blend_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect, 
-	psd_adjustment_blend_proc * blend_proc, psd_uint layer_info_data);
+	psd_adjustment_blend_proc * blend_proc, void * layer_info_data);
 
 
 // Gradient settings
@@ -52,7 +52,7 @@ psd_status psd_get_layer_gradient_map(psd_context * context, psd_layer_record * 
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_gradient_map));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// Version ( =1 for Photoshop 6.0)
@@ -162,7 +162,7 @@ psd_status psd_get_layer_gradient_map(psd_context * context, psd_layer_record * 
 	return psd_status_done;
 }
 
-void psd_layer_gradient_map_free(psd_uint info_data)
+void psd_layer_gradient_map_free(void * info_data)
 {
 	psd_layer_gradient_map * data;
 
@@ -173,7 +173,7 @@ void psd_layer_gradient_map_free(psd_uint info_data)
 	psd_free(data);
 }
 
-static void psd_gradient_map_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
+static void psd_gradient_map_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
 {
 	psd_layer_gradient_map * data = (psd_layer_gradient_map *)layer_info_data;
 	psd_int gray;
@@ -192,8 +192,7 @@ static void psd_gradient_map_proc(psd_uint layer_info_data, psd_int * red, psd_i
 
 psd_bool psd_layer_blend_gradient_map(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	psd_uint layer_info_data;
-	psd_layer_gradient_map * data;
+	psd_layer_gradient_map * data = NULL;
 	psd_int i, j, start_pos, end_pos, mid_pos;
 	psd_int start_red, start_green, start_blue, 
 		end_red, end_green, end_blue,
@@ -204,8 +203,7 @@ psd_bool psd_layer_blend_gradient_map(psd_context * context, psd_layer_record * 
 	{
 		if(layer->layer_info_type[i] == psd_layer_info_type_gradient_map)
 		{
-			layer_info_data = layer->layer_info_data[i];
-			data = (psd_layer_gradient_map *)layer_info_data;
+			data = (psd_layer_gradient_map *)layer->layer_info_data[i];
 			break;
 		}
 	}
@@ -253,7 +251,7 @@ psd_bool psd_layer_blend_gradient_map(psd_context * context, psd_layer_record * 
 			256 - data->color_stop[data->number_color_stops - 1].location / 16);
 	}
 
-	psd_adjustment_blend_color(context, layer, dst_rect, psd_gradient_map_proc, layer_info_data);
+	psd_adjustment_blend_color(context, layer, dst_rect, psd_gradient_map_proc, data);
 
 	layer->adjustment_valid = psd_false;
 	

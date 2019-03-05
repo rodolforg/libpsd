@@ -81,7 +81,7 @@ psd_status psd_get_layer_effects(psd_context * context, psd_layer_record * layer
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_effects));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)(void *)data;
+	layer->layer_info_data[layer->layer_info_count] = (void *)data;
 	layer->layer_info_count ++;
 
 	// Version: 0
@@ -171,7 +171,7 @@ psd_status psd_get_layer_effects2(psd_context * context, psd_layer_record * laye
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_effects));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)(void *)data;
+	layer->layer_info_data[layer->layer_info_count] = (void *)data;
 	layer->layer_info_count ++;
 	
 	// Object effects version: 0
@@ -783,7 +783,7 @@ static void psd_pattern_info_free(psd_pattern_info * pattern_info)
 	psd_freeif(pattern_info->name);
 }
 
-void psd_layer_effects_free(psd_uint layer_info)
+void psd_layer_effects_free(void * layer_info)
 {
 	psd_layer_effects * data;
 	psd_int i;

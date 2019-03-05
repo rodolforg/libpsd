@@ -32,9 +32,9 @@
 #include "psd_math.h"
 
 
-typedef void psd_adjustment_blend_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
+typedef void psd_adjustment_blend_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
 extern void psd_adjustment_blend_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect, 
-	psd_adjustment_blend_proc * blend_proc, psd_uint layer_info_data);
+	psd_adjustment_blend_proc * blend_proc, void * layer_info_data);
 
 
 // New Hue/saturation, Photoshop 5.0
@@ -50,7 +50,7 @@ psd_status psd_get_layer_hue_saturation(psd_context * context, psd_layer_record 
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_hue_saturation));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// Version ( = 2)
@@ -103,7 +103,7 @@ psd_status psd_get_layer_hue_saturation(psd_context * context, psd_layer_record 
 	return psd_status_done;
 }
 
-static void psd_hue_saturation_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
+static void psd_hue_saturation_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
 {
 	psd_layer_hue_saturation * data = (psd_layer_hue_saturation *)layer_info_data;
 	psd_int src_hue, src_saturation, src_lightness;
@@ -140,7 +140,6 @@ static void psd_hue_saturation_proc(psd_uint layer_info_data, psd_int * red, psd
 
 psd_bool psd_layer_blend_hue_saturation(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	psd_uint layer_info_data;
 	psd_layer_hue_saturation * data = NULL;
 	psd_int i, j, increase, range_value[4];
 
@@ -148,8 +147,7 @@ psd_bool psd_layer_blend_hue_saturation(psd_context * context, psd_layer_record 
 	{
 		if(layer->layer_info_type[i] == psd_layer_info_type_new_hue_saturation)
 		{
-			layer_info_data = layer->layer_info_data[i];
-			data = (psd_layer_hue_saturation *)layer_info_data;
+			data = (psd_layer_hue_saturation *)layer->layer_info_data[i];
 			break;
 		}
 	}
@@ -238,7 +236,7 @@ psd_bool psd_layer_blend_hue_saturation(psd_context * context, psd_layer_record 
 		}
 	}
 
-	psd_adjustment_blend_color(context, layer, dst_rect, psd_hue_saturation_proc, layer_info_data);
+	psd_adjustment_blend_color(context, layer, dst_rect, psd_hue_saturation_proc, data);
 
 	layer->adjustment_valid = psd_false;
 	

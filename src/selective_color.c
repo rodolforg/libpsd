@@ -32,9 +32,9 @@
 #include "psd_math.h"
 
 
-typedef void psd_adjustment_blend_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
+typedef void psd_adjustment_blend_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
 extern void psd_adjustment_blend_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect, 
-	psd_adjustment_blend_proc * blend_proc, psd_uint layer_info_data);
+	psd_adjustment_blend_proc * blend_proc, void * layer_info_data);
 
 
 psd_status psd_get_layer_selective_color(psd_context * context, psd_layer_record * layer)
@@ -49,7 +49,7 @@ psd_status psd_get_layer_selective_color(psd_context * context, psd_layer_record
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_selective_color));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// Version ( = 1)
@@ -87,7 +87,7 @@ psd_status psd_get_layer_selective_color(psd_context * context, psd_layer_record
 	return psd_status_done;
 }
 
-static void psd_selective_color_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
+static void psd_selective_color_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
 {
 	psd_layer_selective_color * data = (psd_layer_selective_color *)layer_info_data;
 	psd_int hue, saturation, lightness;
@@ -187,7 +187,6 @@ static void psd_selective_color_proc(psd_uint layer_info_data, psd_int * red, ps
 
 psd_bool psd_layer_blend_selective_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	psd_uint layer_info_data;
 	psd_layer_selective_color * data = NULL;
 	psd_int i;
 
@@ -195,15 +194,14 @@ psd_bool psd_layer_blend_selective_color(psd_context * context, psd_layer_record
 	{
 		if(layer->layer_info_type[i] == psd_layer_info_type_selective_color)
 		{
-			layer_info_data = layer->layer_info_data[i];
-			data = (psd_layer_selective_color *)layer_info_data;
+			data = (psd_layer_selective_color *)layer->layer_info_data[i];
 			break;
 		}
 	}
 	if(data == NULL)
 		return psd_false;
 
-	psd_adjustment_blend_color(context, layer, dst_rect, psd_selective_color_proc, layer_info_data);
+	psd_adjustment_blend_color(context, layer, dst_rect, psd_selective_color_proc, data);
 
 	layer->adjustment_valid = psd_false;
 	

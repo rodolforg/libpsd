@@ -64,7 +64,7 @@ psd_status psd_get_layer_color_balance(psd_context * context, psd_layer_record *
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_color_balance));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// shadows, midtones, highlights

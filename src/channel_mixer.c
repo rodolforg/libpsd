@@ -33,9 +33,9 @@
 #include "psd_math.h"
 
 
-typedef void psd_adjustment_blend_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
+typedef void psd_adjustment_blend_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue);
 extern void psd_adjustment_blend_color(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect, 
-	psd_adjustment_blend_proc * blend_proc, psd_uint layer_info_data);
+	psd_adjustment_blend_proc * blend_proc, void * layer_info_data);
 
 
 psd_status psd_get_layer_channel_mixer(psd_context * context, psd_layer_record * layer)
@@ -50,7 +50,7 @@ psd_status psd_get_layer_channel_mixer(psd_context * context, psd_layer_record *
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_channel_mixer));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// Version ( = 1)
@@ -76,7 +76,7 @@ psd_status psd_get_layer_channel_mixer(psd_context * context, psd_layer_record *
 	return psd_status_done;
 }
 
-static void psd_channel_mixer_proc(psd_uint layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
+static void psd_channel_mixer_proc(void * layer_info_data, psd_int * red, psd_int * green, psd_int * blue)
 {
 	psd_layer_channel_mixer * data = (psd_layer_channel_mixer *)layer_info_data;
 	psd_int dst_red, dst_green, dst_blue, src_red, src_green, src_blue, gray;
@@ -136,7 +136,7 @@ static void psd_channel_mixer_proc(psd_uint layer_info_data, psd_int * red, psd_
 
 psd_bool psd_layer_blend_channel_mixer(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	psd_uint layer_info_data;
+	void * layer_info_data;
 	psd_int i;
 
 	if(context->color_mode != psd_color_mode_rgb)
@@ -150,7 +150,7 @@ psd_bool psd_layer_blend_channel_mixer(psd_context * context, psd_layer_record *
 			break;
 		}
 	}
-	if(layer_info_data == 0)
+	if(layer_info_data == NULL)
 		return psd_false;
 
 	psd_adjustment_blend_color(context, layer, dst_rect, psd_channel_mixer_proc, layer_info_data);

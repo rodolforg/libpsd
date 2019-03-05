@@ -46,7 +46,7 @@ psd_status psd_get_layer_threshold(psd_context * context, psd_layer_record * lay
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_threshold));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// (1...255)
@@ -63,7 +63,6 @@ psd_status psd_get_layer_threshold(psd_context * context, psd_layer_record * lay
 
 psd_bool psd_layer_blend_threshold(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	psd_uint layer_info_data;
 	psd_layer_threshold * data = NULL;
 	psd_int i;
 	psd_uchar lookup_table[256];
@@ -72,8 +71,7 @@ psd_bool psd_layer_blend_threshold(psd_context * context, psd_layer_record * lay
 	{
 		if(layer->layer_info_type[i] == psd_layer_info_type_threshold)
 		{
-			layer_info_data = layer->layer_info_data[i];
-			data = (psd_layer_threshold *)layer_info_data;
+			data = (psd_layer_threshold *)layer->layer_info_data[i];
 			break;
 		}
 	}

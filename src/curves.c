@@ -66,7 +66,7 @@ psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer,
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_curves));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// padding, document is wrong, maybe photoshop is wrong
@@ -176,7 +176,7 @@ psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer,
 	return psd_status_done;
 }
 
-void psd_layer_curves_free(psd_uint info_data)
+void psd_layer_curves_free(void * info_data)
 {
 	psd_layer_curves * data;
 

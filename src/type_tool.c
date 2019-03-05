@@ -42,7 +42,7 @@ psd_status psd_get_layer_type_tool(psd_context * context, psd_layer_record * lay
 	if(data == NULL)
 		return psd_status_malloc_failed;
 	memset(data, 0, sizeof(psd_layer_type_tool));
-	layer->layer_info_data[layer->layer_info_count] = (psd_uint)data;
+	layer->layer_info_data[layer->layer_info_count] = data;
 	layer->layer_info_count ++;
 
 	// Version ( = 1)
@@ -206,7 +206,7 @@ psd_status psd_get_layer_type_tool(psd_context * context, psd_layer_record * lay
 	return psd_status_done;
 }
 
-void psd_layer_type_tool_free(psd_uint info_data)
+void psd_layer_type_tool_free(psd_layer_type_tool * info_data)
 {
 	psd_layer_type_tool * data;
 	psd_int i;
