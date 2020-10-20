@@ -101,6 +101,7 @@ typedef enum {
 	psd_status_divider_signature_error			= -529,
 	psd_status_pattern_fill_unsupport_version	= -530,
 	psd_status_pattern_unsupport_version		= -531,
+	psd_status_invalid_image_dimension			= -532,
 } psd_status;
 
 typedef enum {
@@ -543,7 +544,7 @@ typedef struct _psd_path
 typedef struct _psd_channel_info
 {
 	psd_short					channel_id;		// 2 bytes for Channel ID: 0 = red, 1 = green, etc.; -1 = transparency mask; -2 = user supplied layer mask
-	psd_int						data_length;	// 4 bytes for length of corresponding channel data. (**PSB** 8 bytes for length of corresponding channel data.)
+	int64_t						data_length;	// 4 bytes for length of corresponding channel data. (**PSB** 8 bytes for length of corresponding channel data.)
 	psd_bool					restricted;
 } psd_channel_info;
 
@@ -1223,7 +1224,8 @@ typedef struct _psd_context
 	psd_stream					stream;
 	psd_uint					state;
 	psd_load_tag				load_tag;
-	
+
+	psd_ushort					version;
 	psd_int						width;
 	psd_int						height;
 	psd_ushort					channels;

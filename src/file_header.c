@@ -49,6 +49,7 @@ typedef struct
 // output: status of done
 psd_status psd_get_file_header(psd_context * context)
 {
+	psd_int max_dimension;
 	psd_file_header_binary	header;
 
 	if(psd_stream_get(context, (psd_uchar *)&header, sizeof(psd_file_header_binary)) == sizeof(psd_file_header_binary))
@@ -58,19 +59,22 @@ psd_status psd_get_file_header(psd_context * context)
 			return psd_status_file_signature_error;
 
 		// Version: always equal to 1
-		if(PSD_CHAR_TO_SHORT(header.version) != 1)
+		context->version = PSD_CHAR_TO_SHORT(header.version);
+		if(context->version < 1 || context->version > 2)
 			return psd_status_file_version_error;
+
+		max_dimension = context->version == 1 ? 30000 : 300000;
 
 		// The height of the image in pixels
 		context->height = PSD_CHAR_TO_INT(header.height_of_image);
-		// Supported range is 1 to 30,000
-		psd_assert(context->height >= 1 && context->height <= 30000);
+		if (context->height < 1 || context->height > max_dimension)
+			return psd_status_invalid_image_dimension;
 		
 		// The width of the image in pixels
 		context->width = PSD_CHAR_TO_INT(header.width_of_image);
-		// Supported range is 1 to 30,000
-		psd_assert(context->width >= 1 && context->width <= 30000);
-		
+		if (context->width < 1 || context->width > max_dimension)
+			return psd_status_invalid_image_dimension;
+
 		// The number of channels in the image, including any alpha channels
 		context->color_channels = context->channels = PSD_CHAR_TO_SHORT(header.number_of_channels);
 		// Supported range is 1 to 56.

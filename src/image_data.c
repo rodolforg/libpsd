@@ -578,15 +578,19 @@ psd_status psd_get_image_data(psd_context * context)
 		// used by the Macintosh ROM routine PackBits, and the TIFF standard.
 		case 1:
 			psd_assert(context->depth == 8 || context->depth == 16);
+			psd_int count_size = context->version == 1 ? 2 : 4;
 			count_data = compress_data;
-			pixel_data = compress_data + context->height * context->channels * 2;
+			pixel_data = compress_data + context->height * context->channels * count_size;
 			channel_data = image_data;
 			for(i = 0; i < context->channels; i ++)
 			{
 				pixel_count = 0;
 				for(j = 0; j < context->height; j ++)
 				{
-					byte_count = PSD_CHAR_TO_SHORT(count_data);
+					if (context->version == 1)
+						byte_count = PSD_CHAR_TO_SHORT(count_data);
+					else
+						byte_count = PSD_CHAR_TO_INT(count_data);
 					for(k = 0; k < byte_count;)
 					{
 						len = *pixel_data;
@@ -618,7 +622,7 @@ psd_status psd_get_image_data(psd_context * context)
 							// do nothing
 						}
 					}
-					count_data += 2;
+					count_data += count_size;
 				}
 
 				psd_assert(pixel_count == pixels);

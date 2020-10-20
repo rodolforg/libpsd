@@ -313,7 +313,10 @@ static psd_status psd_get_layer_info(psd_context * context)
 	psd_status status = psd_status_done;
 
 	// Length of the layers info section. (**PSB** length is 8 bytes.)
-	length = psd_stream_get_int(context);
+	if (context->version == 1)
+		length = psd_stream_get_int(context);
+	else
+		length = psd_stream_get_int64(context);
 	// rounded up to a multiple of 2
 	if(length & 0x01)
 		length ++;
@@ -389,7 +392,10 @@ static psd_status psd_get_layer_info(psd_context * context)
 		for(j = 0; j < layer->number_of_channels; j ++)
 		{
 			layer->channel_info[j].channel_id = psd_stream_get_short(context);
-			layer->channel_info[j].data_length = psd_stream_get_int(context);
+			if (context->version == 1)
+				layer->channel_info[j].data_length = psd_stream_get_int(context);
+			else
+				layer->channel_info[j].data_length = psd_stream_get_int64(context);
 			layer->channel_info[j].restricted = psd_false;
 		}
 
@@ -734,7 +740,7 @@ static psd_status psd_get_layer_info(psd_context * context)
 // Global layer mask info
 static psd_status psd_get_mask_info(psd_context * context)
 {
-	psd_int length;
+	int64_t length;
 	int64_t prev_stream_pos;
 
 	// Length of global layer mask info section.
@@ -770,7 +776,10 @@ psd_status psd_get_layer_and_mask(psd_context * context)
 	psd_uint tag;
 
 	// Length of the layer and mask information section. (**PSB** length is 8 bytes.)
-	length = psd_stream_get_int(context);
+	if (context->version == 1)
+		length = psd_stream_get_int(context);
+	else
+		length = psd_stream_get_int64(context);
 	if(length <= 0)
 		return psd_status_done;
 	
@@ -811,7 +820,14 @@ psd_status psd_get_layer_and_mask(psd_context * context)
 				continue;
 			}
 			
-			size = psd_stream_get_int(context);
+			if (context->version == 1)
+				size = psd_stream_get_int(context);
+			else if (tag == 'LMsk' || tag == 'Lr16' || tag == 'Lr32' || tag == 'Layr'
+				|| tag == 'Mt16' || tag == 'Mt32' || tag == 'Mtrn'
+				|| tag == 'Alph' || tag == 'FMsk' || tag == 'lnk2'
+				|| tag == 'FEid' || tag == 'FXid' || tag == 'PxSD')
+				size = psd_stream_get_int64(context);
+			else size = psd_stream_get_int(context);
 			
 			switch(tag)
 			{

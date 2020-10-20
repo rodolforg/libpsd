@@ -211,6 +211,17 @@ psd_int psd_stream_get_int(psd_context * context)
 	return value;
 }
 
+int64_t psd_stream_get_int64(psd_context * context)
+{
+	psd_uchar str[8];
+	psd_int value = 0;
+
+	if(psd_stream_get(context, str, 8) == 8)
+		value = PSD_CHAR_TO_INT64(str);
+
+	return value;
+}
+
 psd_float psd_stream_get_float(psd_context * context)
 {
 	psd_uchar str[4], *dst;
