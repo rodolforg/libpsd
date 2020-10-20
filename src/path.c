@@ -189,7 +189,7 @@ void psd_path_free(psd_context * context)
 	context->paths = NULL;
 }
 
-psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * layer, psd_int size)
+psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * layer, int64_t size)
 {
 	psd_uint tag;
 	
@@ -206,7 +206,7 @@ psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * l
 	layer->vector_mask.path = (psd_path *)psd_malloc(sizeof(psd_path));
 	if(layer->vector_mask.path == NULL)
 		return psd_status_malloc_failed;
-	psd_get_path_record(context, layer->vector_mask.path, size - 8);
+	psd_get_path_record(context, layer->vector_mask.path, (psd_int)size - 8);
 
 	return psd_status_done;
 }

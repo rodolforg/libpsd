@@ -52,10 +52,11 @@ extern void psd_adjustment_blend_rgb(psd_context * context, psd_layer_record * l
 
 
 // Additional layer -- curves
-psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer, psd_int data_length)
+psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer, int64_t data_length)
 {
 	psd_layer_curves * data;
-	psd_int i, j, count, version, prev_stream_pos = context->stream.current_pos;
+	psd_int i, j, count, version;
+	int64_t prev_stream_pos = context->stream.current_pos;
 	psd_uint tag;
 	psd_int curve_count, point_count, output_value, input_value;
 

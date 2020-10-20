@@ -103,7 +103,7 @@ static boolean fill_input_buffer (j_decompress_ptr cinfo)
 	return FALSE;
 }
 
-static void skip_input_data (j_decompress_ptr cinfo, long num_bytes)
+static void skip_input_data (j_decompress_ptr cinfo, int64_t num_bytes)
 {
 	my_src_ptr src = (my_src_ptr) cinfo->src;
 	long   num_can_do;
@@ -221,7 +221,7 @@ static JpegProgContext * psd_jpeg_image_begin_load(void)
 	return jpeg_context;
 }
 
-static boolean psd_jpeg_image_load_increment(JpegProgContext * jpeg_context, psd_uchar * buffer, psd_int size)
+static boolean psd_jpeg_image_load_increment(JpegProgContext * jpeg_context, psd_uchar * buffer, int64_t size)
 {
 	struct jpeg_decompress_struct *cinfo;
 	my_src_ptr  src;
@@ -417,7 +417,7 @@ static void psd_jpeg_image_stop_load(JpegProgContext * jpeg_context)
 	psd_free(jpeg_context);
 }
 
-psd_status psd_thumbnail_decode_jpeg(psd_argb_color ** dst_image, psd_int compress_len, psd_context * context)
+psd_status psd_thumbnail_decode_jpeg(psd_argb_color ** dst_image, int64_t compress_len, psd_context * context)
 {
 	psd_uchar * buffer;
 	JpegProgContext * jpeg_context;
@@ -492,7 +492,7 @@ psd_status psd_thumbnail_decode_jpeg(psd_argb_color ** dst_image, psd_int compre
 	return psd_status_done;
 }
 
-psd_status psd_thumbnail_decode_raw(psd_argb_color ** dst_image, psd_int image_len, psd_context * context)
+psd_status psd_thumbnail_decode_raw(psd_argb_color ** dst_image, int64_t image_len, psd_context * context)
 {
 	// currently, we don't support the raw format
 	// since we don't meet any psd file with raw thumbnail

@@ -40,10 +40,11 @@ extern void psd_adjustment_blend_rgb(psd_context * context, psd_layer_record * l
 
 // Additional layer -- levels
 // Levels settings files are loaded and saved in the Levels dialog.
-psd_status psd_get_layer_levels(psd_context * context, psd_layer_record * layer, psd_int data_length)
+psd_status psd_get_layer_levels(psd_context * context, psd_layer_record * layer, int64_t data_length)
 {
 	psd_layer_levels * data;
-	psd_int i, prev_stream_pos = context->stream.current_pos;
+	psd_int i;
+	int64_t prev_stream_pos = context->stream.current_pos;
 	psd_uint tag;
 	
 	layer->layer_info_type[layer->layer_info_count] = psd_layer_info_type_levels;

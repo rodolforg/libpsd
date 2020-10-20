@@ -509,7 +509,7 @@ static psd_status psd_combine_multichannel8_channel(psd_context * context)
 // stored in scan-line order, with no pad bytes,
 psd_status psd_get_image_data(psd_context * context)
 {
-	psd_int pixels, length, left_size;
+	int64_t pixels, length, left_size;
 	psd_int i, j, k, byte_count, len, pixel_count, start_channel;
 	psd_short compression;
 	psd_uchar * image_data = NULL, * compress_data = NULL;

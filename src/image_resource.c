@@ -41,20 +41,21 @@ static const psd_uchar ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
 #endif
 
 
-extern psd_status psd_thumbnail_decode_jpeg(psd_argb_color ** dst_image, psd_int compress_len, psd_context * context);
-extern psd_status psd_thumbnail_decode_raw(psd_argb_color ** dst_image, psd_int image_len, psd_context * context);
+extern psd_status psd_thumbnail_decode_jpeg(psd_argb_color ** dst_image, int64_t compress_len, psd_context * context);
+extern psd_status psd_thumbnail_decode_raw(psd_argb_color ** dst_image, int64_t image_len, psd_context * context);
 extern void psd_alpha_channel_free(psd_context * context);
-extern psd_status psd_get_path(psd_context * context, psd_int length);
+extern psd_status psd_get_path(psd_context * context, int64_t length);
 extern void psd_path_free(psd_context * context);
 
 
 psd_status psd_get_image_resource(psd_context * context)
 {
-	psd_int length, i, size;
+	psd_int i;
+	int64_t length, size;
 	psd_ushort ID;
 	psd_uint tag;
 	psd_uchar sizeofname;
-	psd_int sizeofdata, prev_stream_pos;
+	int64_t sizeofdata, prev_stream_pos;
 	psd_uchar * buffer;
 	psd_status status;
 
@@ -206,7 +207,7 @@ psd_status psd_get_image_resource(psd_context * context)
 					// 2 bytes per layer containing a group ID for the dragging groups. Layers in
 					// a group have the same group ID.
 					case 1026:
-						context->layer_group_count = sizeofdata / 2;
+						context->layer_group_count = (psd_int)(sizeofdata / 2);
 						context->layer_group_id = (psd_ushort *)psd_malloc(context->layer_group_count * 2);
 						if(context->layer_group_id == NULL)
 							return psd_status_malloc_failed;
@@ -354,7 +355,7 @@ psd_status psd_get_image_resource(psd_context * context)
 					case 1053:
 						if(context->alpha_channels == 0)
 						{
-							context->alpha_channels = sizeofdata / 4;
+							context->alpha_channels = (psd_int)(sizeofdata / 4);
 							context->color_channels = context->channels - context->alpha_channels;
 							context->alpha_channel_info = (psd_alpha_channel_info *)psd_malloc(context->alpha_channels * sizeof(psd_alpha_channel_info));
 							if(context->alpha_channel_info == NULL)
@@ -587,7 +588,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						if (context->exif_data == NULL)
 							return psd_status_malloc_failed;
 						psd_stream_get(context, context->exif_data, sizeofdata);
-						context->exif_data_length = sizeofdata;
+						context->exif_data_length = (psd_int)sizeofdata;
 						context->fill_exif_data = psd_true;
 #	endif // ifdef PSD_INCLUDDE_LIBEXIF
 						break;
@@ -609,7 +610,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						if (context->XMP_metadata == NULL)
 							return psd_status_malloc_failed;
 						psd_stream_get(context, context->XMP_metadata, sizeofdata);
-						context->XMP_metadata_length = sizeofdata;
+						context->XMP_metadata_length = (psd_int)sizeofdata;
 						context->fill_XMP_metadata = psd_true;
 #	endif // ifdef PSD_INCLUDE_LIBXML
 						break;

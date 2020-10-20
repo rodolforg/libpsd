@@ -499,8 +499,9 @@ static psd_status psd_combine_multichannel8_channel(psd_context * context, psd_p
 // The following is repeated for each pattern.
 psd_status psd_get_pattern(psd_context * context)
 {
-	psd_int pattern_length, prev_stream_pos, index, len, i, j, k,
+	psd_int pattern_length, index, len, i, j, k,
 		red, green, blue, max_channels, depth, compression;
+	int64_t prev_stream_pos;
 	psd_bool written;
 	psd_pattern * pattern;
 	psd_argb_color * color_map = NULL;

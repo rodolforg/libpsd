@@ -53,31 +53,25 @@ extern void psd_image_blend_free(psd_context * context);
 static psd_status psd_main_loop(psd_context * context);
 
 
-static psd_status psd_image_load_tag(psd_context ** dst_context, psd_char * file_name, psd_load_tag load_tag)
+static psd_status psd_image_load_tag(psd_context ** dst_context, psd_file_stream * file,  psd_load_tag load_tag)
 {
 	psd_context * context;
 	psd_status status;
 
+	if (file->data == NULL)
+		return psd_status_invalid_file;
+
 	if(dst_context == NULL)
 		return psd_status_invalid_context;
-	if(file_name == NULL)
-		return psd_status_invalid_file;
 
 	context = (psd_context *)psd_malloc(sizeof(psd_context));
 	if(context == NULL)
 		return psd_status_malloc_failed;
 	memset(context, 0, sizeof(psd_context));
 
-	context->file_name = file_name;
-	context->file = psd_fopen(file_name);
-	if (context->file == NULL)
-	{
-		psd_free(context);
-		return psd_status_invalid_file;
-	}
-	
+	context->file = *file;
 	context->state = PSD_FILE_HEADER;
-	context->stream.file_length = psd_fsize(context->file);
+	context->stream.file_length = psd_fsize(&context->file);
 	context->load_tag = load_tag;
 	status = psd_main_loop(context);
 	
@@ -98,33 +92,75 @@ static psd_status psd_image_load_tag(psd_context ** dst_context, psd_char * file
 
 psd_status psd_image_load(psd_context ** dst_context, psd_char * file_name)
 {
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_all);
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream(dst_context, &stream);
 }
 
 psd_status psd_image_load_header(psd_context ** dst_context, psd_char * file_name)
 {
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_header);
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream_header(dst_context, &stream);
 }
 
 psd_status psd_image_load_layer(psd_context ** dst_context, psd_char * file_name)
 {
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_layer);
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream_layer(dst_context, &stream);
 }
 
 psd_status psd_image_load_merged(psd_context ** dst_context, psd_char * file_name)
 {
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_merged);
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream_merged(dst_context, &stream);
 }
 
 psd_status psd_image_load_thumbnail(psd_context ** dst_context, psd_char * file_name)
 {
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_thumbnail);
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream_thumbnail(dst_context, &stream);
 }
 
 psd_status psd_image_load_exif(psd_context ** dst_context, psd_char * file_name)
 {
+	psd_file_stream stream;
+	psd_open_file(file_name, &stream);
+	return psd_image_load_stream_exif(dst_context, &stream);
+}
+
+psd_status psd_image_load_stream(psd_context ** dst_context, psd_file_stream * file)
+{
+	return psd_image_load_tag(dst_context, file, psd_load_tag_all);
+}
+
+psd_status psd_image_load_stream_header(psd_context ** dst_context, psd_file_stream * file)
+{
+	return psd_image_load_tag(dst_context, file, psd_load_tag_header);
+}
+
+psd_status psd_image_load_stream_layer(psd_context ** dst_context, psd_file_stream * file)
+{
+	return psd_image_load_tag(dst_context, file, psd_load_tag_layer);
+}
+
+psd_status psd_image_load_stream_merged(psd_context ** dst_context, psd_file_stream * file)
+{
+	return psd_image_load_tag(dst_context, file, psd_load_tag_merged);
+}
+
+psd_status psd_image_load_stream_thumbnail(psd_context ** dst_context, psd_file_stream * file)
+{
+	return psd_image_load_tag(dst_context, file, psd_load_tag_thumbnail);
+}
+
+psd_status psd_image_load_stream_exif(psd_context ** dst_context, psd_file_stream * file)
+{
 #ifdef PSD_INCLUDE_LIBXML
-	return psd_image_load_tag(dst_context, file_name, psd_load_tag_exif);
+	return psd_image_load_tag(dst_context, file, psd_load_tag_exif);
 #else
 	return psd_status_unsupport_yet;
 #endif

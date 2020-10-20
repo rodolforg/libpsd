@@ -30,9 +30,9 @@
 #include "psd_color.h"
 
 
-extern psd_status psd_get_layer_levels(psd_context * context, psd_layer_record * layer, psd_int data_length);
+extern psd_status psd_get_layer_levels(psd_context * context, psd_layer_record * layer, int64_t data_length);
 extern void psd_layer_levels_free(void * info_data);
-extern psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer, psd_int data_length);
+extern psd_status psd_get_layer_curves(psd_context * context, psd_layer_record * layer, int64_t data_length);
 extern void psd_layer_curves_free(void * info_data);
 extern psd_status psd_get_layer_brightness_contrast(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_color_balance(psd_context * context, psd_layer_record * layer);
@@ -53,7 +53,7 @@ extern psd_status psd_get_layer_pattern_fill(psd_context * context, psd_layer_re
 extern psd_status psd_get_layer_channel_image_data(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_layer_type_tool(psd_context * context, psd_layer_record * layer);
 extern psd_status psd_get_pattern(psd_context * context);
-extern psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * layer, psd_int size);
+extern psd_status psd_get_layer_vector_mask(psd_context * context, psd_layer_record * layer, int64_t size);
 extern void psd_layer_type_tool_free(psd_layer_type_tool * info_data);
 extern void psd_layer_vector_mask_free(psd_layer_record * layer);
 extern void psd_layer_effects_free(void * layer_info);
@@ -247,7 +247,7 @@ static psd_status psd_get_layer_fill_opacity(psd_context * context, psd_layer_re
 }
 
 // Section divider setting (Photoshop 6.0)
-static psd_status psd_get_layer_section_divider(psd_context * context, psd_layer_record * layer, psd_int size)
+static psd_status psd_get_layer_section_divider(psd_context * context, psd_layer_record * layer, int64_t size)
 {
 	// Type. 4 possible values, 0 = any other type of layer, 1 = open "folder", 2 =
 	// closed "folder", 3 = bounding section divider, hidden in the UI
@@ -278,7 +278,7 @@ static psd_status psd_get_layer_section_divider(psd_context * context, psd_layer
 }
 
 // Channel blending restrictions setting (Photoshop 6.0)
-static psd_status psd_get_layer_channel_blending_restrictions(psd_context * context, psd_layer_record * layer, psd_int size)
+static psd_status psd_get_layer_channel_blending_restrictions(psd_context * context, psd_layer_record * layer, int64_t size)
 {
 	psd_int i, j, channel_number;
 
@@ -303,8 +303,9 @@ static psd_status psd_get_layer_channel_blending_restrictions(psd_context * cont
 // shows the high-level organization of the layer information.
 static psd_status psd_get_layer_info(psd_context * context)
 {
-	psd_int length, extra_length, i, j, size;
-	psd_int prev_stream_pos, prev_layer_stream_pos, extra_stream_pos;
+	int64_t length, extra_length, size;
+	psd_int i, j;
+	int64_t prev_stream_pos, prev_layer_stream_pos, extra_stream_pos;
 	psd_bool skip_first_alpha = psd_false;
 	psd_layer_record * layer, * group_layer;
 	psd_uchar flags;
@@ -505,7 +506,7 @@ static psd_status psd_get_layer_info(psd_context * context)
 		layer->layer_blending_ranges.gray_black_dst = psd_stream_get_short(context);
 		layer->layer_blending_ranges.gray_white_dst = psd_stream_get_short(context);
 
-		layer->layer_blending_ranges.number_of_blending_channels = (size - 8) / 8;
+		layer->layer_blending_ranges.number_of_blending_channels = (psd_int)((size - 8) / 8);
 		if (layer->layer_blending_ranges.number_of_blending_channels <= 0)
 		{
 			psd_layer_free(layer);
@@ -734,7 +735,7 @@ static psd_status psd_get_layer_info(psd_context * context)
 static psd_status psd_get_mask_info(psd_context * context)
 {
 	psd_int length;
-	psd_int prev_stream_pos;
+	int64_t prev_stream_pos;
 
 	// Length of global layer mask info section.
 	length = psd_stream_get_int(context);
@@ -764,7 +765,7 @@ static psd_status psd_get_mask_info(psd_context * context)
 // This section of the document describes the formats of layer and mask records.
 psd_status psd_get_layer_and_mask(psd_context * context)
 {
-	psd_int length, prev_stream_pos, extra_stream_pos, size;
+	int64_t length, prev_stream_pos, extra_stream_pos, size;
 	psd_status status;
 	psd_uint tag;
 

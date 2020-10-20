@@ -12,8 +12,8 @@ extern "C" {
 #define PSD_CHAR_TO_INT(str)			((*(str) << 24) | (*((str) + 1) << 16) | (*((str) + 2) << 8) | *((str) + 3))
 
 
-psd_int psd_stream_get(psd_context * context, psd_uchar * buffer, psd_int length);
-psd_int psd_stream_get_null(psd_context * context, psd_int length);
+int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length);
+int64_t psd_stream_get_null(psd_context * context, int64_t length);
 psd_bool psd_stream_get_bool(psd_context * context);
 psd_uchar psd_stream_get_char(psd_context * context);
 psd_short psd_stream_get_short(psd_context * context);

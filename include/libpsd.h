@@ -311,10 +311,10 @@ typedef enum {
 typedef struct _psd_stream
 {
 	psd_uchar *					buffer;
-	psd_int						read_in_length;
-	psd_int						read_out_length;
-	psd_int						file_length;
-	psd_int						current_pos;
+	int64_t						read_in_length;
+	int64_t						read_out_length;
+	int64_t						file_length;
+	int64_t						current_pos;
 } psd_stream;
 
 
@@ -1208,10 +1208,18 @@ typedef struct _psd_layer_type_tool
 /*********************************************************************************/
 /*********************************************************************************/
 
+typedef struct _psd_file_stream {
+	void* data;
+	size_t (__cdecl *read)(void* ptr, size_t count, void* data);
+	int (__cdecl *seek)(int64_t offset, int origin, void* data);
+	int64_t (__cdecl *get_size)(void* data);
+	void (__cdecl *close)(void *data);
+} psd_file_stream;
+
+
 typedef struct _psd_context
 {
-	psd_char *					file_name;
-	void *						file;
+	psd_file_stream				file;
 	psd_stream					stream;
 	psd_uint					state;
 	psd_load_tag				load_tag;
@@ -1310,11 +1318,11 @@ typedef struct _psd_context
 	// temporary data
 	psd_uchar *					rand_data;
 	psd_uchar *					temp_image_data;
-	psd_int						temp_image_length;
+	int64_t						temp_image_length;
 	psd_uchar *					temp_channel_data;
-	psd_int						temp_channel_length;
-	psd_int						per_channel_length;
-	psd_int						max_channel_length;
+	int64_t						temp_channel_length;
+	int64_t						per_channel_length;
+	int64_t						max_channel_length;
 } psd_context;
 
 
@@ -1324,6 +1332,14 @@ psd_status psd_image_load_layer(psd_context ** dst_context, psd_char * file_name
 psd_status psd_image_load_merged(psd_context ** dst_context, psd_char * file_name);
 psd_status psd_image_load_thumbnail(psd_context ** dst_context, psd_char * file_name);
 psd_status psd_image_load_exif(psd_context ** dst_context, psd_char * file_name);
+
+psd_status psd_image_load_stream(psd_context ** dst_context, psd_file_stream * stream);
+psd_status psd_image_load_stream_header(psd_context ** dst_context, psd_file_stream * stream);
+psd_status psd_image_load_stream_layer(psd_context ** dst_context, psd_file_stream * stream);
+psd_status psd_image_load_stream_merged(psd_context ** dst_context, psd_file_stream * stream);
+psd_status psd_image_load_stream_thumbnail(psd_context ** dst_context, psd_file_stream * stream);
+psd_status psd_image_load_stream_exif(psd_context ** dst_context, psd_file_stream * stream);
+
 psd_status psd_image_free(psd_context * context);
 psd_status psd_adjustment_layer_update(psd_layer_record * layer);
 psd_status psd_layer_effects_update(psd_layer_record * layer, psd_layer_effects_type type);

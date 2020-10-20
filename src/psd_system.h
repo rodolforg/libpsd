@@ -18,15 +18,15 @@ extern "C" {
 #endif
 
 
-void * psd_malloc(psd_int size);
-void * psd_realloc(void * block, psd_int size);
+void * psd_malloc(size_t size);
+void * psd_realloc(void * block, size_t size);
 void psd_free(void * block);
 void psd_freeif(void * block);
-void * psd_fopen(psd_char * file_name);
-psd_int psd_fsize(void * file);
-psd_int psd_fread(psd_uchar * buffer, psd_int count, void * file);
-psd_int psd_fseek(void * file, psd_int length);
-void psd_fclose(void * file);
+void psd_open_file(psd_char * file_name, psd_file_stream * stream);
+int64_t psd_fsize(psd_file_stream * stream);
+size_t psd_fread(psd_uchar * buffer, size_t count, psd_file_stream * stream);
+int psd_fseek(int64_t length, psd_file_stream * stream);
+void psd_fclose(psd_file_stream * stream);
 
 
 #ifdef __cplusplus

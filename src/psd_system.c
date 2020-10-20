@@ -5,12 +5,18 @@
 #include "psd_system.h"
 
 
-void * psd_malloc(psd_int size)
+static size_t f_read(void* dst, size_t count, void* data);
+static int f_seek(int64_t offset, int origin, void* data);
+static int64_t f_get_size(void* data);
+static void f_close(void* data);
+
+
+void * psd_malloc(size_t size)
 {
 	return malloc(size);
 }
 
-void * psd_realloc(void * block, psd_int size)
+void * psd_realloc(void * block, size_t size)
 {
 	return realloc(block, size);
 }
@@ -26,36 +32,70 @@ void psd_freeif(void * block)
 		psd_free(block);
 }
 
-void * psd_fopen(psd_char * file_name)
+void psd_open_file(psd_char * file_name, psd_file_stream * stream)
 {
-	return (void *)fopen(file_name, "rb");
+	stream->data = fopen(file_name, "rb");
+	if (stream->data == NULL)
+		return;
+
+	stream->read = &f_read;
+	stream->seek = &f_seek;
+	stream->close = &f_close;
 }
 
-psd_int psd_fsize(void * file)
+int64_t psd_fsize(psd_file_stream * stream)
 {
-	psd_int offset, size;
+	return stream->get_size(stream->data);
+}
 
-	offset = ftell((FILE *)file);
-	fseek((FILE *)file, 0, SEEK_END);
-	size = ftell(file);
-	fseek((FILE *)file, 0, SEEK_SET);
-	fseek((FILE *)file, offset, SEEK_CUR);
+size_t psd_fread(psd_uchar * buffer, size_t count, psd_file_stream * stream)
+{
+	return stream->read(buffer, count, stream->data);
+}
 
+int psd_fseek(int64_t offset, psd_file_stream * stream)
+{
+	return stream->seek(offset, SEEK_CUR, stream->data);
+}
+
+void psd_fclose(psd_file_stream * stream)
+{
+	stream->close(stream->data);
+}
+
+
+static size_t f_read(void* dst, size_t count, void* data)
+{
+	return fread(dst, 1, count, (FILE*)data);
+}
+
+static int f_seek(int64_t offset, int origin, void* data)
+{
+#if defined(_WIN32)
+	return _fseeki64((FILE*)data, offset, origin);
+#elif defined(__linux__)
+	return fseeko((FILE*)data, offset, origin);
+#else
+	return fseek((FILE*)data, offset, origin);
+#endif
+}
+
+static int64_t f_get_size(void* data)
+{
+	int64_t offset, size;
+#if defined(_WIN32)
+	offset = _ftelli64((FILE*)data);
+#elif defined(__linux__)
+	offset = ftello((FILE*)data);
+#else
+	offset = ftell((FILE*)data);
+#endif
+	size = f_seek(0, SEEK_END, data);
+	f_seek(offset, SEEK_SET, data);
 	return size;
 }
 
-psd_int psd_fread(psd_uchar * buffer, psd_int count, void * file)
+static void f_close(void* data)
 {
-	return fread(buffer, 1, count, (FILE *)file);
+	fclose((FILE*)data);
 }
-
-psd_int psd_fseek(void * file, psd_int length)
-{
-	return fseek((FILE *)file, length, SEEK_CUR);
-}
-
-void psd_fclose(void * file)
-{
-	fclose((FILE *)file);
-}
-
