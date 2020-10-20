@@ -57,7 +57,6 @@ psd_status psd_get_image_resource(psd_context * context)
 	psd_uchar sizeofname;
 	int64_t sizeofdata, prev_stream_pos;
 	psd_uchar * buffer;
-	psd_status status;
 
 	// Length of image resource section
 	length = psd_stream_get_int(context);
