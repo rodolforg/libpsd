@@ -732,7 +732,7 @@ psd_status psd_get_pattern(psd_context * context)
 				// whose size is calculated as (LayerBottom-LayerTop)*
 				// (LayerRight-LayerLeft).
 				case 0:
-					memcpy(image_data, context->temp_channel_data, context->per_channel_length);
+					memcpy(image_data, context->temp_channel_data, (size_t)context->per_channel_length);
 					break;
 
 				// If the compression code is 1, the image data starts with the byte counts

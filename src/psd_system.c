@@ -11,9 +11,10 @@ static int64_t f_get_size(void* data);
 static void f_close(void* data);
 
 
-void * psd_malloc(size_t size)
+void * psd_malloc(uint64_t size)
 {
-	return malloc(size);
+	if ((size_t)size != size) return NULL;
+	return malloc((size_t)size);
 }
 
 void * psd_realloc(void * block, size_t size)

@@ -54,10 +54,10 @@ psd_bool psd_test_big_endian(void)
 	return result;
 }
 
-int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length)
+int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, size_t length)
 {
 	psd_stream * stream;
-	int64_t left, read = 0;
+	uint64_t left, read = 0;
 
 	if(buffer == NULL)
 		return 0;
@@ -76,16 +76,16 @@ int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length
 	left = stream->read_in_length - stream->read_out_length;
 	if(left > 0 && left <= length)
 	{
-		memcpy(buffer, stream->buffer + stream->read_out_length, left);
+		memcpy(buffer, stream->buffer + stream->read_out_length, (size_t)left);
 		buffer += left;
-		length -= left;
+		length -= (size_t)left;
 		stream->read_out_length = stream->read_in_length;
 		read += left;
 	}
 
 	if(length > PSD_STREAM_MAX_READ_LENGTH)
 	{
-		read += psd_fread(buffer, length, &context->file);
+		read += psd_fread(buffer, (size_t)length, &context->file);
 		stream->read_out_length = stream->read_in_length;
 	}
 	else if(stream->read_out_length == stream->read_in_length)
@@ -93,9 +93,9 @@ int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length
 		if(length > 0)
 		{
 			stream->read_in_length = psd_fread(stream->buffer, PSD_STREAM_MAX_READ_LENGTH, &context->file);
-			if(length > stream->read_in_length)
-				length = stream->read_in_length;
-			memcpy(buffer, stream->buffer, length);
+			if((int64_t)length > stream->read_in_length)
+				length = (size_t)stream->read_in_length;
+			memcpy(buffer, stream->buffer, (size_t)length);
 			read += length;
 			stream->read_out_length = length;
 		}
@@ -104,8 +104,8 @@ int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length
 	{
 		left = stream->read_in_length - stream->read_out_length;
 		if(length > left)
-			length = left;
-		memcpy(buffer, stream->buffer + stream->read_out_length, length);
+			length = (size_t)left;
+		memcpy(buffer, stream->buffer + stream->read_out_length, (size_t)length);
 		stream->read_out_length += length;
 		read += length;
 	}

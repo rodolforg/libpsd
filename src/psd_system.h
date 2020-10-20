@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 
-void * psd_malloc(size_t size);
+void * psd_malloc(uint64_t size);
 void * psd_realloc(void * block, size_t size);
 void psd_free(void * block);
 void psd_freeif(void * block);

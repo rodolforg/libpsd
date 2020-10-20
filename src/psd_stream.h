@@ -16,7 +16,7 @@ extern "C" {
 	| (*((str) + 4) << 24) | (*((str) + 5) << 16) | (*((str) + 6) << 8) | *((str) + 7))
 
 
-int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, int64_t length);
+int64_t psd_stream_get(psd_context * context, psd_uchar * buffer, size_t length);
 int64_t psd_stream_get_null(psd_context * context, int64_t length);
 psd_bool psd_stream_get_bool(psd_context * context);
 psd_uchar psd_stream_get_char(psd_context * context);

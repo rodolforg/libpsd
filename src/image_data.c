@@ -552,7 +552,7 @@ psd_status psd_get_image_data(psd_context * context)
 			context->temp_image_data = NULL;
 			return psd_status_malloc_failed;
 		}
-		psd_stream_get(context, compress_data, left_size);
+		psd_stream_get(context, compress_data, (size_t)left_size);
 	}
 
 	switch(compression)
@@ -560,7 +560,7 @@ psd_status psd_get_image_data(psd_context * context)
 		// Raw image data
 		case 0:
 			psd_assert(length <= left_size);
-			psd_stream_get(context, image_data, length);
+			psd_stream_get(context, image_data, (size_t)length);
 			break;
 
 		// RLE compressed the image data starts with the byte counts for all the
@@ -624,7 +624,7 @@ psd_status psd_get_image_data(psd_context * context)
 		// ZIP without prediction
 		case 2:
 #ifdef PSD_INCLUDE_ZLIB
-			status = psd_unzip_without_prediction(compress_data, left_size, image_data, length);
+			status = psd_unzip_without_prediction(compress_data, (size_t)left_size, image_data, (size_t)length);
 			if (status != psd_status_done)
 				return status;
 #else
@@ -635,7 +635,7 @@ psd_status psd_get_image_data(psd_context * context)
 		// ZIP with prediction.
 		case 3:
 #ifdef PSD_INCLUDE_ZLIB
-			status = psd_unzip_with_prediction(compress_data, left_size, image_data, length, 
+			status = psd_unzip_with_prediction(compress_data, (size_t)left_size, image_data, (size_t)length,
 				context->width, context->depth);
 			if (status != psd_status_done)
 				return status;
@@ -755,7 +755,7 @@ psd_status psd_get_image_data(psd_context * context)
 		if(context->depth == 8)
 		{
 			memcpy(context->alpha_channel_info[i - context->color_channels].channel_data, 
-				context->temp_image_data + context->per_channel_length * i, context->per_channel_length);
+				context->temp_image_data + context->per_channel_length * i, (size_t)context->per_channel_length);
 		}
 		else
 		{

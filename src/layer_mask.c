@@ -545,7 +545,7 @@ static psd_status psd_get_layer_info(psd_context * context)
 		// Layer name: Pascal string, padded to a multiple of 4 bytes.
 		size = psd_stream_get_char(context);
 		size = ((size + 1 + 3) & ~0x03) - 1;
-		psd_stream_get(context, layer->layer_name, size);
+		psd_stream_get(context, layer->layer_name, (size_t)size);
 
 		while(context->stream.current_pos - extra_stream_pos < extra_length)
 		{

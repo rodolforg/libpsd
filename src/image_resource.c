@@ -145,7 +145,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						buffer = (psd_uchar *)psd_malloc(sizeofdata);
 						if(buffer == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, buffer, sizeofdata);
+						psd_stream_get(context, buffer, (size_t)sizeofdata);
 						if(context->alpha_channels == 0)
 						{
 							size = 0;
@@ -193,7 +193,7 @@ psd_status psd_get_image_resource(psd_context * context)
 					// The caption as a Pascal string.
 					case 1008:
 						size = psd_stream_get_char(context);
-						psd_stream_get(context, context->caption, size);
+						psd_stream_get(context, context->caption, (size_t)size);
 						break;
 
 					// Layer state information
@@ -261,7 +261,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						context->thumbnail_resource.jfif_data = (psd_uchar *)psd_malloc(sizeofdata - 28);
 						if(context->thumbnail_resource.jfif_data == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, context->thumbnail_resource.jfif_data, sizeofdata - 28);
+						psd_stream_get(context, context->thumbnail_resource.jfif_data, (size_t)(sizeofdata - 28));
 #endif
 						context->fill_thumbnail_resource = psd_true;
 						break;
@@ -295,7 +295,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						buffer = (psd_uchar *)psd_malloc(sizeofdata);
 						if(buffer == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, buffer, sizeofdata);
+						psd_stream_get(context, buffer, (size_t)sizeofdata);
 						if(context->alpha_channels == 0)
 						{
 							size = 0;
@@ -572,7 +572,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						context->iptc_data = (psd_uchar *)psd_malloc(sizeofdata);
 						if (context->iptc_data == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, context->iptc_data, sizeofdata);
+						psd_stream_get(context, context->iptc_data, (size_t)sizeofdata);
 						context->iptc_data_length = (psd_int)sizeofdata;
 						context->fill_iptc_data = psd_true;
 						break;
@@ -596,7 +596,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						context->exif_data = (psd_uchar *)psd_malloc(sizeofdata);
 						if (context->exif_data == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, context->exif_data, sizeofdata);
+						psd_stream_get(context, context->exif_data, (size_t)sizeofdata);
 						context->exif_data_length = (psd_int)sizeofdata;
 						context->fill_exif_data = psd_true;
 #	endif // ifdef PSD_INCLUDDE_LIBEXIF
@@ -618,7 +618,7 @@ psd_status psd_get_image_resource(psd_context * context)
 						context->XMP_metadata = (psd_uchar *)psd_malloc(sizeofdata);
 						if (context->XMP_metadata == NULL)
 							return psd_status_malloc_failed;
-						psd_stream_get(context, context->XMP_metadata, sizeofdata);
+						psd_stream_get(context, context->XMP_metadata, (size_t)sizeofdata);
 						context->XMP_metadata_length = (psd_int)sizeofdata;
 						context->fill_XMP_metadata = psd_true;
 #	endif // ifdef PSD_INCLUDE_LIBXML
