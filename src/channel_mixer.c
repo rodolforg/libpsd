@@ -136,7 +136,7 @@ static void psd_channel_mixer_proc(void * layer_info_data, psd_int * red, psd_in
 
 psd_bool psd_layer_blend_channel_mixer(psd_context * context, psd_layer_record * layer, psd_rect * dst_rect)
 {
-	void * layer_info_data;
+	void * layer_info_data = NULL;
 	psd_int i;
 
 	if(context->color_mode != psd_color_mode_rgb)
