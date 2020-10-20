@@ -567,6 +567,15 @@ psd_status psd_get_image_resource(psd_context * context)
 						break;
 #endif // PSD_GET_ALL_IMAGE_RESOURCE
 #ifdef PSD_GET_METADATA_RESOURCE
+					// IPTC-NAA record
+					case 1028:
+						context->iptc_data = (psd_uchar *)psd_malloc(sizeofdata);
+						if (context->iptc_data == NULL)
+							return psd_status_malloc_failed;
+						psd_stream_get(context, context->iptc_data, sizeofdata);
+						context->iptc_data_length = (psd_int)sizeofdata;
+						context->fill_iptc_data = psd_true;
+						break;
 					// (Photoshop 7.0) EXIF data 1
 					case 1058:
 					// (Photoshop 7.0) EXIF data 3

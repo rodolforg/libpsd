@@ -1289,6 +1289,10 @@ typedef struct _psd_context
 	psd_uchar *					exif_data;
 	psd_int						exif_data_length;
 
+	psd_bool					fill_iptc_data;
+	psd_uchar *					iptc_data;
+	psd_int						iptc_data_length;
+
 	psd_bool					fill_XMP_metadata;
 	psd_uchar *					XMP_metadata;
 	psd_int						XMP_metadata_length;
