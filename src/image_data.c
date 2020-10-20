@@ -29,15 +29,7 @@
 #include "psd_system.h"
 #include "psd_stream.h"
 #include "psd_color.h"
-
-
-#ifdef PSD_INCLUDE_ZLIB
-extern psd_status psd_unzip_without_prediction(psd_uchar *src_buf, size_t src_len,
-	psd_uchar *dst_buf, size_t dst_len);
-extern psd_status psd_unzip_with_prediction(psd_uchar *src_buf, size_t src_len,
-	psd_uchar *dst_buf, size_t dst_len,
-	psd_int row_size, psd_int color_depth);
-#endif
+#include "psd_zip.h"
 
 
 // 1bit bitamp

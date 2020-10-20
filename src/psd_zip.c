@@ -23,6 +23,7 @@
  * $Id: psd_zip.c, created by Patrick in 2007.02.02, libpsd@graphest.com Exp $
  */
 
+#include "psd_zip.h"
 #include "libpsd.h"
 #include "psd_config.h"
 
