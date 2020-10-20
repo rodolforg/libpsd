@@ -565,7 +565,8 @@ psd_status psd_get_image_resource(psd_context * context)
 						}
 						context->fill_url_list = psd_true;
 						break;
-
+#endif // PSD_GET_ALL_IMAGE_RESOURCE
+#ifdef PSD_GET_METADATA_RESOURCE
 					// (Photoshop 7.0) EXIF data 1
 					case 1058:
 					// (Photoshop 7.0) EXIF data 3
@@ -613,7 +614,9 @@ psd_status psd_get_image_resource(psd_context * context)
 						context->fill_XMP_metadata = psd_true;
 #	endif // ifdef PSD_INCLUDE_LIBXML
 						break;
+#endif // PSD_GET_METADATA_RESOURCE
 
+#ifdef PSD_GET_ALL_IMAGE_RESOURCE
 					// (Photoshop 7.0) Print scale
 					case 1062:
 						// 2 bytes style (0 = centered, 1 = size to fit, 2 = user defined).
