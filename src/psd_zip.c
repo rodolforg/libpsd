@@ -28,10 +28,17 @@
 
 #ifdef PSD_INCLUDE_ZLIB
 #include "zlib.h"
+#include <memory.h>
 
+#define PUT_CHUNK(stream, direction, buf, buf_len) do { \
+		stream.next_##direction = (Bytef *)(buf); \
+		stream.avail_##direction = (psd_int)((buf_len) < INT_MAX ? (buf_len) : INT_MAX); \
+		src_buf += stream.avail_##direction; \
+		src_len -= stream.avail_##direction; \
+	} while (0)
 
-psd_status psd_unzip_without_prediction(psd_uchar *src_buf, psd_int src_len, 
-	psd_uchar *dst_buf, psd_int dst_len)
+psd_status psd_unzip_without_prediction(psd_uchar *src_buf, size_t src_len, 
+	psd_uchar *dst_buf, size_t dst_len)
 {
 	z_stream stream;
 	psd_int state;
@@ -39,20 +46,22 @@ psd_status psd_unzip_without_prediction(psd_uchar *src_buf, psd_int src_len,
 	memset(&stream, 0, sizeof(z_stream));
 	stream.data_type = Z_BINARY;
 
-	stream.next_in = (Bytef *)src_buf;
-	stream.avail_in = src_len;
-	stream.next_out = (Bytef *)dst_buf;
-	stream.avail_out = dst_len;
+	PUT_CHUNK(stream, in, src_buf, src_len);
+	PUT_CHUNK(stream, out, dst_buf, dst_len);
 
 	if(inflateInit(&stream) != Z_OK)
 		return psd_status_unzip_error;
 	
 	do {
 		state = inflate(&stream, Z_PARTIAL_FLUSH);
-		if(state == Z_STREAM_END)
+		if (state == Z_STREAM_END)
 			break;
-		if(state == Z_DATA_ERROR || state != Z_OK)
+		if (state == Z_DATA_ERROR || state != Z_OK)
 			break;
+		if (stream.avail_in == 0)
+			PUT_CHUNK(stream, in, src_buf, src_len);
+		if (stream.avail_out == 0)
+			PUT_CHUNK(stream, out, dst_buf, dst_len);
 	}  while (stream.avail_out > 0);
 
 	if (state != Z_STREAM_END && state != Z_OK)
@@ -85,13 +94,13 @@ psd_bool psd_test_big_endian(void)
 	return result;
 }
 
-psd_status psd_unzip_with_prediction(psd_uchar *src_buf, psd_int src_len, 
-	psd_uchar *dst_buf, psd_int dst_len, 
+psd_status psd_unzip_with_prediction(psd_uchar *src_buf, size_t src_len,
+	psd_uchar *dst_buf, size_t dst_len,
 	psd_int row_size, psd_int color_depth)
 {
 	psd_status status;
 	psd_bool big_endian;
-	int len;
+	psd_int len;
 	psd_uchar * buf;
 	psd_ushort * wbuf;
 

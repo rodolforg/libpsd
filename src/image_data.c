@@ -32,10 +32,10 @@
 
 
 #ifdef PSD_INCLUDE_ZLIB
-extern psd_status psd_unzip_without_prediction(psd_uchar *src_buf, psd_int src_len, 
-	psd_uchar *dst_buf, psd_int dst_len);
-extern psd_status psd_unzip_with_prediction(psd_uchar *src_buf, psd_int src_len, 
-	psd_uchar *dst_buf, psd_int dst_len, 
+extern psd_status psd_unzip_without_prediction(psd_uchar *src_buf, size_t src_len,
+	psd_uchar *dst_buf, size_t dst_len);
+extern psd_status psd_unzip_with_prediction(psd_uchar *src_buf, size_t src_len,
+	psd_uchar *dst_buf, size_t dst_len,
 	psd_int row_size, psd_int color_depth);
 #endif
 
